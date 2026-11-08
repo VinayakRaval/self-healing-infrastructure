@@ -1,0 +1,29 @@
+---
+- name: Self-Healing NGINX Recovery
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Restart NGINX Docker container
+      command: docker restart nginx-app
+
+    - name: Verify NGINX container is running
+      command: docker inspect -f '{{.State.Running}}' nginx-app
+      register: nginx_status
+      retries: 5
+      delay: 3
+      until: nginx_status.stdout == "true"
+
+    - name: Verify NGINX HTTP response
+      uri:
+        url: http://localhost
+        status_code: 200
+      register: nginx_http
+      retries: 5
+      delay: 3
+      until: nginx_http.status == 200
+
+    - name: Display recovery result
+      debug:
+        msg: "SUCCESS: NGINX container restarted and HTTP health check passed!"

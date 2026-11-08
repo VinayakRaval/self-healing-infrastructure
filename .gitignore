@@ -1,0 +1,21 @@
+cat > .gitignore <<'EOF'
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Live Alertmanager config contains the webhook token
+alertmanager/alertmanager.yml
+
+# Python generated files
+__pycache__/
+*.pyc
+.venv/
+
+# Logs and temporary files
+*.log
+.DS_Store
+EOF
